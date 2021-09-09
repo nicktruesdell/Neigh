@@ -1,0 +1,192 @@
+﻿@using neigh.Classes
+@model neigh.Models.ShowCopyModel
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Create</h2>
+
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal" ng-app="app" ng-controller="ShowCopyController">
+        <h4>Show</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        
+        <div class="form-group">
+            @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EnumDropDownListFor(model => model.Type, htmlAttributes: new { @class = "form-control", ng_model="Type" })
+                @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Level, htmlAttributes: new {@class = "control-label col-md-2"})
+            <div class="col-md-10">
+                @Html.EnumDropDownListFor(model => model.Level, htmlAttributes: new { @class = "form-control", ng_model="Level" })
+                @Html.ValidationMessageFor(model => model.Level, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", ng_model="Name" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.StartDate, new { @class = "form-control", ng_model="StartDate" })
+                @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.EndDate, new { @class = "form-control", ng_model = "EndDate" })
+                @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Location, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control", ng_model="Location" } })
+                @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+            <div class="form-group" data-judge="true" ng-repeat="judge in judges track by $index">
+                <label ng-attr="{for: '\'txtJudge\' + $index'}" class="control-label col-md-2">{{'Judge ' + ($index + 1)}}</label>
+                <div class="col-md-10">
+                    <input type="text" class="form-control" ng-attr="{id:'\'txtJudge\' + $index', name:'\'Judges[\' + $index + \']\''}" ng-model="judge"/>
+                    <a ng-show="$index == judges.length - 1" href="javascript: void(0)" ng-click="newJudge()">Add Another Judge</a>
+                    <a ng-show="$index != judges.length - 1" href="javascript:void(0)" ng-click="removeJudge($index)">Remove Judge</a>
+                </div>
+            </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Order</th>
+                    <th scope="col">Class #</th>
+                    <th scope="col">Class</th>
+                    <th scope="col">Horse</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="entry in entries">
+                    <td>
+                        <input type="text" ng-model="entry.SortOrder" />
+                    </td>
+                    <td>
+                        <input type="text" ng-model="entry.ClassNumber" />
+                    </td>
+                    <td>
+                        <select class="form-control" ng-options="class.Value as class.Text for class in allClasses" ng-model="entry.ClassId"></select>
+                    </td>
+                    <td>
+                        <select class="form-control" ng-options="horse.Value as horse.Text for horse in allHorses" ng-model="entry.HorseId"></select>
+                    </td>
+                    <td>
+                        <a href="javascript:void(0)" ng-click="removeEntry($index)">Remove</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4"><a href="javascript:void(0)" ng-click="addEntry()">Add Additional Entry</a></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <button type="button" ng-click="save()" class="btn btn-default">Create Show</button>
+                <button type="button" ng-click="returnToIndex()" class="btn btn-danger">Cancel - Back to Shows</button>
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/angular")
+
+    <script type="text/javascript">
+        app.constant('model', @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model)));
+
+        app.factory('classesFactory', ['$resource', function ($resource) {
+            return $resource('/admin/HorseInClass', null, {
+                'forShow': { url: '/Admin/HorseInClass/ForShow/:showId', isArray: true }
+            });
+        }]);
+
+        app.factory('horsesFactory', ['$resource', function ($resource) {
+            return $resource('/admin/Horses', null, {
+                'getAll': { url: '/Admin/Horses/GetAll', isArray: true }
+            });
+        }]);
+
+        app.controller("ShowCopyController", ['$scope', '$http', 'classesFactory', 'horsesFactory', 'model', function ($scope, $http, classesFactory, horsesFactory, model) {
+            $scope.StartDate = null;
+            $scope.EndDate = null;
+            $scope.Type = model.Type.toString();
+            $scope.Location = model.Location;
+            $scope.Level = model.Level.toString();
+            $scope.entries = model.Entries;
+            $scope.judges = model.Judges;
+            $scope.allClasses = classesFactory.forShow({showId: model.Id});
+            $scope.allHorses = horsesFactory.getAll();
+            $scope.newJudge = function () {
+                $scope.judges.push("");
+            };
+            $scope.removeJudge = function (index) {
+                $scope.judges.splice(index, 1);
+            };
+            $scope.addEntry = function() {
+                var i = $scope.entries.length + 1;
+                $scope.entries.push({ SortOrder: i});
+            }
+            $scope.removeEntry = function(index) {
+                $scope.entries.splice(index, 1);
+            }
+            $scope.returnToIndex = function() {
+                window.location = '/Admin/Shows';
+            };
+            $scope.save = function() {
+                var postData = {
+                    Id: $scope.Id,
+                    Type: $scope.Type,
+                    Location: $scope.Location,
+                    Level: $scope.Level,
+                    Entries: $scope.entries,
+                    Judges: $scope.judges,
+                    Name: $scope.Name,
+                    StartDate: $scope.StartDate,
+                    EndDate: $scope.EndDate
+                };
+                $http.post('/Admin/Shows/Copy', postData).then(
+                    function success() {
+                        $scope.returnToIndex();
+                    },
+                    function error(response) {
+                        alert('Unable to submit changes. Please try again. Status code ' + response.status);
+                    }
+                );
+            };
+        }]);
+    </script>
+}

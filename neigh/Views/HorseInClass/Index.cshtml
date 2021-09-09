@@ -1,0 +1,62 @@
+﻿@using neigh.Helpers
+@model neigh.Models.HorseInClassDisplayModel
+
+@{
+    ViewBag.Title = "Manage Show Entries";
+}
+
+<h2>Manage Show Entries</h2>
+
+<p>
+    @Html.ActionLink("Create New Entry", "Create")
+</p>
+
+<p>
+    @Html.LabelFor(model => model.SelectedShowId, new { @class = "control-label"})
+    @Html.DropDownListFor(model => model.SelectedShowId, Model.AllShows, new { id = "cmbShow" })
+    <button type="button" onclick="refreshPage()">Refresh</button>
+    <button type="button" onclick="viewAllShows()">View All Shows</button>
+</p>
+
+<table class="table">
+    <tr>
+        <th scope="col">
+            @Html.DisplayColumnNameFor(Model.Items, model => model.HorseName)
+        </th>
+        <th scope="col">
+            @Html.DisplayColumnNameFor(Model.Items, model => model.ShowName)
+        </th>
+        <th scope="col">
+            Action
+        </th>
+    </tr>
+
+    @foreach (var item in Model.Items)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.HorseName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ShowName)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { showid = item.ShowId, horseid = item.HorseId }) |
+                @Html.ActionLink("Delete", "Delete", new { showid = item.ShowId, horseid = item.HorseId })
+            </td>
+        </tr>
+    }
+
+</table>
+
+@section Scripts {
+    <script type="text/javascript">
+        function refreshPage() {
+            window.location = '/Admin/HorseInClass/Index/' + $('#cmbShow').val();
+        }
+
+        function viewAllShows() {
+            window.location = '/Admin/HorseInClass/AllShows';
+        }
+    </script>    
+}

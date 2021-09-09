@@ -1,0 +1,41 @@
+﻿@using Newtonsoft.Json
+@model IEnumerable<neigh.Models.ShowModel>
+
+@{
+    ViewBag.Title = "All Shows";
+}
+
+<div class="jumbotron">
+    <h1>NEIGH</h1>
+</div>
+
+<div class="row" ng-app="app" ng-controller="HomeController">
+    <h2>All Shows</h2>
+    <ul ng-if="shows.length > 0">
+        <li ng-repeat="show in shows track by $index" ng-if="$index < stopIndex">
+            <a href="/Results/{{show.Id}}">{{show.Name}}</a>
+        </li>
+    </ul>
+    @Html.ActionLink("View Upcoming Shows", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/angular")
+
+    <script type="text/javascript">
+        app.constant('Shows', @Html.Raw(JsonConvert.SerializeObject(Model, Formatting.Indented, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore })))
+
+        app.controller("HomeController", ["$scope", "Shows", function ($scope, Shows) {
+            $scope.shows = Shows;
+            $scope.stopIndex = 999;
+            $scope.expanded = false;
+            $scope.expand = function(){
+                $scope.stopIndex = shows.length;
+                $scope.expanded = true;
+            };
+            $scope.collapse = function() {
+                $scope.expanded = false;
+            }
+        }]);
+    </script>
+}

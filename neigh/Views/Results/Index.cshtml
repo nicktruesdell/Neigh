@@ -1,0 +1,133 @@
+﻿@model IEnumerable<neigh.Datamodel.Result>
+@{
+    ViewBag.Title = "Results for" + ViewBag.ShowName;
+}
+
+<h2>Results for @ViewBag.ShowName</h2>
+<ng-app ng-app="app" ng-controller="SelectController">
+    <table class="table">
+        <tr>
+            <th scope="col">
+                Select
+            </th>
+            <th scope="col">
+                @Html.DisplayNameFor(model => model.ClassNumber)
+            </th>
+            <th scope="col">
+                @Html.DisplayNameFor(model => model.ClassId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.HorseId)
+            </th>
+            <th scope="col">
+                @Html.DisplayNameFor(model => model.HorsesInClass)
+            </th>
+            @if (ViewBag.ShowOverallPlacing)
+            {
+                <th scope="col">
+                    @Html.DisplayNameFor(model => model.OverallPlacing)
+                </th>
+            }
+            @foreach (var item in (System.Collections.Generic.IEnumerable<neigh.Datamodel.Show_Judges>)ViewBag.Judges)
+            {
+                <th scope="col">
+                    @Html.DisplayFor(modelItem => item.Name)
+                </th>
+            }
+            
+            <th scope="col">
+                @Html.DisplayNameFor(model => model.Points)
+            </th>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <th scope="col">Actions</th>
+            }
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.CheckBox("select", new { title = "Select " + item.Horse.Nickname + " - " + item.Class.Name, ng_click = String.Format("toggleSelection({0}, {1}, {2})", 
+                        item.HorseId, item.ShowId, item.ClassId) })
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ClassNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Class.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Horse.Nickname)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.HorsesInClass)
+                </td>
+                @if (ViewBag.ShowOverallPlacing)
+                {
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OverallPlacing)
+                    </td>
+                }
+                @foreach (var ResultItem in item.Results_Show_Judges)
+                {
+                    <td>
+                        @Html.DisplayFor(modelItem => ResultItem.Placing)
+                    </td>
+                }
+                <td>
+                    @Html.DisplayFor(modelItem => item.Points)
+                </td>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { HorseId = item.HorseId, ClassId = item.ClassId, ShowId = item.ShowId })
+                    </td>
+                }
+            </tr>
+        }
+    </table>
+    <a href="javascript:void(0)" ng-click="editSelected()">Edit Selected</a> |
+    @Html.ActionLink("Reorder Classes", "Reorder", new { ShowId = Model.First().ShowId })
+</ng-app>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/angular")
+    <script type="text/javascript">
+        app.controller('SelectController', ['$scope', function ($scope) {
+            $scope.selectedVals = [];
+            $scope.findElementIndex = function (HorseId, ShowId, ClassId) {
+                var index = -1;
+                $scope.selectedVals.forEach(function (item, itemIndex) {
+                    if (item.horseId == HorseId && item.showId == ShowId && item.classId == ClassId) {
+                        index = itemIndex;
+                    }
+                });
+                return index;
+            };
+            $scope.toggleSelection = function (HorseId, ShowId, ClassId) {
+                var itemIndex = $scope.findElementIndex(HorseId, ShowId, ClassId);
+                if (itemIndex > -1) {
+                    $scope.selectedVals.splice(itemIndex, 1);
+                } else {
+                    $scope.selectedVals.push({
+                        horseId: HorseId,
+                        showId: ShowId,
+                        classId: ClassId
+                    });
+                }
+            };
+            $scope.editSelected = function () {
+                if ($scope.selectedVals.length == 0) {
+                    alert("At least one item must be selected prior to editing.");
+                } else {
+                    var queryStringParams = [];
+                    $scope.selectedVals.forEach(function (item) {
+                        queryStringParams.push('HorseId=' + item.horseId + '&ShowId=' + item.showId + '&ClassId=' + item.classId);
+                    });
+                    var queryString = queryStringParams.join('&');
+                    window.location = 'Edit?' + queryString;
+                }
+            }
+        }]);
+    </script>
+}

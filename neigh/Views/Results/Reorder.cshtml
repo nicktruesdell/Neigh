@@ -1,0 +1,82 @@
+﻿@using neigh.Classes;
+@{
+    ViewBag.Title = "Reorder Classes for " + ViewBag.ShowName;
+}
+
+<h2>Reorder Classes for @ViewBag.ShowName</h2>
+<ng-app ng-app="app" ng-controller="ReorderController">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Order</th>
+                <th scope="col">Class #</th>
+                <th scope="col">Class</th>
+                <th scope="col">Horse</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="result in results | orderBy:result.SortOrder">
+                <td>
+                    @Html.VariableNumericDropdownList("sortOrder", 1, (int)ViewBag.ResultsCount, htmlAttributes: new { ng_Model = "result.SortOrder", ng_change = "sortChanged(result.SortOrder, result.refSortOrder)" })
+                </td>
+                <td>{{result.ClassNumber}}</td>
+                <td>{{result.ClassName}}</td>
+                <td>{{result.HorseName}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <button type="button" ng-click="save()" class="btn btn-default">Update Order</button>
+    <button type="button" ng-click="returnToIndex()" class="btn btn-danger">Cancel - Back to Results</button>
+</ng-app>
+
+    @section Scripts {
+        @Scripts.Render("~/bundles/angular")
+        <script type="text/javascript">
+            app.constant('resultsData', @Html.Raw(ViewBag.JSONData));
+
+            app.controller('ReorderController', ['$scope', '$http', '$timeout', 'resultsData', function($scope, $http, $timeout, resultsData){
+                console.log(window.location);
+                $scope.results = resultsData;
+                $scope.inWatchCallback = false;
+                for (var i = 0; i <= $scope.results.length -1; i++){
+                    if ($scope.results[i].SortOrder == ""){
+                        $scope.results[i].SortOrder = (i + 1).toString();
+                    }
+                    $scope.results[i].refSortOrder = $scope.results[i].SortOrder;
+                }
+                $scope.sortChanged = function(newSort, oldSort){
+                    var iNewSort = parseInt(newSort);
+                    var iOldSort = parseInt(oldSort);
+                    $scope.results.forEach(function(item){
+                        var iItemSort = parseInt(item.SortOrder);
+                        var iReferenceSort = parseInt(item.refSortOrder);
+                        if (iNewSort < iOldSort){
+                            if (iItemSort >= iNewSort && iItemSort < iOldSort && iReferenceSort != iOldSort){
+                                var iNewItemSort = iItemSort + 1;
+                                item.SortOrder = iNewItemSort.toString();
+                                item.refSortOrder = iNewItemSort.toString();
+                            }
+                        } else if (iOldSort < iNewSort){
+                            if (iItemSort <= iNewSort && iItemSort > iOldSort && iReferenceSort != iOldSort){
+                                var iNewItemSort = iItemSort - 1;
+                                item.SortOrder = iNewItemSort.toString();
+                                item.refSortOrder = iNewItemSort.toString();
+                            }
+                        } else if (iReferenceSort == iOldSort) {
+                            item.refSortOrder = item.SortOrder;
+                        }
+                    });
+                };
+                $scope.returnToIndex = function () {
+                    window.location = '@ViewBag.ReturnURL';
+                };
+                $scope.save = function() {
+                    $http.post(window.location.href, $scope.results).then(function success(){
+                        window.location = '@ViewBag.ReturnURL';
+                    }, function error(){
+                        alert('Unable to save changes.');
+                    });
+                };
+            }]);
+        </script>
+    }

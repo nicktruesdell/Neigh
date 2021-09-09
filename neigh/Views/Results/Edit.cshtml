@@ -1,0 +1,101 @@
+﻿
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit Results</h2>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal" ng-app="app" ng-controller="ResultsController">
+        @*@foreach (var Result in Model)
+        {
+            @Html.HiddenFor(model => Result.ClassId)
+            @Html.HiddenFor(model => Result.HorseId)
+            @Html.HiddenFor(model => Result.ShowId)
+            <h3>@Html.DisplayFor(model => Result.Horse.Nickname) - @Html.DisplayFor(model => Result.Class.Name)</h3>
+
+            foreach (var JudgeResult in Result.Results_Show_Judges)
+            {
+                @Html.HiddenFor(model => JudgeResult.ClassId)
+                @Html.HiddenFor(model => JudgeResult.HorseId)
+                @Html.HiddenFor(model => JudgeResult.ShowId)
+                <div class="form-group">
+                    @Html.LabelFor(model => JudgeResult.Placing, "Result for " + JudgeResult.Show_Judges.Name, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => JudgeResult.Placing, new { @class = "form-control"})
+                    </div>
+                </div>
+            }
+            <div class="form-group">
+                @Html.LabelFor(model => Result.HorsesInClass, new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => Result.HorsesInClass, new { @class = "form-control" })
+                </div>
+            </div>
+        }*@
+        <div ng-repeat="result in results" ng-init="result.index = $index">
+            <h3>{{result.Horse.Nickname}} - {{result.Class.Name}}</h3>
+            <div class="form-group">
+                <label class="control-label col-md-2" ng-attr="{for: '\'txtClassNumber\' + result.index'}">Class #</label>
+                <div class="col-md-10">
+                    <input type="number" ng-model="result.ClassNumber" ng-attr="{id: '\txtClassNumber\' + result.index'}" />
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="control-label col-md-2" ng-attr="{for: '\'txtHorsesInClass\' + result.index'}"># In Class</label>
+                <div class="col-md-10">
+                    <input type="number" ng-model="result.HorsesInClass" ng-attr="{id: '\'txtHorsesInClass\' + result.index'}" />
+                </div>
+            </div>
+
+            <div class="form-group" ng-if="showOverallPlacing">
+                <label class="control-label col-md-2" ng-attr="{for: '\'txtOverallPlacing\' + result.index'}">Overall Placing</label>
+                <div class="col-md-10">
+                    <input type="number" ng-model="result.OverallPlacing" ng-attr="{id: '\'txtOverallPlacing\' + result.index'}" />
+                </div>
+            </div>
+            
+            <div class="form-group" ng-repeat="judgeResult in result.Results_Show_Judges" ng-init="judgeResult.index = $index">
+                <label class="control-label col-md-2" ng-attr="{for: '\'r\' + result.index + \'txtResult\' + judgeResult.index'}">{{judgeResult.Show_Judges.Name}}</label>
+                <div class="col-md-10">
+                    <input type="number" ng-model="judgeResult.Placing" ng-attr="{id: '\'r\' + result.index + \'txtResult\' + judgeResult.index'}" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <button type="button" ng-click="save()" class="btn btn-default">Update Results</button>
+                <button type="button" ng-click="returnToIndex()" class="btn btn-danger">Cancel - Back to Results</button>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/angular");
+    <script type="text/javascript">
+        app.constant('resultsData', @Html.Raw(ViewBag.JSONData));
+
+        app.controller('ResultsController', ['$scope', '$http', 'resultsData', function($scope, $http, resultsData){
+            $scope.results = resultsData;
+            $scope.showOverallPlacing = @Html.Raw(ViewBag.ShowOverallPlacing);
+            $scope.save = function() {
+                $http.post('/Results/Edit', $scope.results).then(
+                    function success() {
+                        $scope.returnToIndex();
+                    },
+                    function error(response) {
+                        alert('Unable to submit changes. Please try again. Status code ' + response.status);
+                    }
+                );
+            }
+            $scope.returnToIndex = function () {
+                window.location = '@ViewBag.ReturnURL';
+            }
+        }]);
+    </script>
+}

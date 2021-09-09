@@ -1,0 +1,478 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="neighModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Classes">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Type" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="QualifyingPoints" Type="int" Nullable="false" />
+          <Property Name="Archive" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Horses">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FullName" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="Nickname" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="ARegNumber" Type="nvarchar" MaxLength="50" />
+          <Property Name="RRegNumber" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Results">
+          <Key>
+            <PropertyRef Name="HorseId" />
+            <PropertyRef Name="ShowId" />
+            <PropertyRef Name="ClassId" />
+          </Key>
+          <Property Name="HorseId" Type="int" Nullable="false" />
+          <Property Name="ShowId" Type="int" Nullable="false" />
+          <Property Name="ClassId" Type="int" Nullable="false" />
+          <Property Name="HorsesInClass" Type="int" />
+          <Property Name="OverallPlacing" Type="int" />
+          <Property Name="SortOrder" Type="int" />
+          <Property Name="Points" Type="float" StoreGeneratedPattern="Computed" />
+          <Property Name="ClassNumber" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Results_Show_Judges">
+          <Key>
+            <PropertyRef Name="HorseId" />
+            <PropertyRef Name="ShowId" />
+            <PropertyRef Name="ClassId" />
+            <PropertyRef Name="Show_JudgeId" />
+          </Key>
+          <Property Name="HorseId" Type="int" Nullable="false" />
+          <Property Name="ShowId" Type="int" Nullable="false" />
+          <Property Name="ClassId" Type="int" Nullable="false" />
+          <Property Name="Show_JudgeId" Type="int" Nullable="false" />
+          <Property Name="Placing" Type="int" />
+        </EntityType>
+        <EntityType Name="Show_Judges">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ShowId" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Shows">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ShowType" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="StartDate" Type="datetime" Nullable="false" />
+          <Property Name="EndDate" Type="datetime" Nullable="false" />
+          <Property Name="Location" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="Level" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Results_Classes">
+          <End Role="Classes" Type="Self.Classes" Multiplicity="1" />
+          <End Role="Results" Type="Self.Results" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Classes">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Results">
+              <PropertyRef Name="ClassId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Results_Horses">
+          <End Role="Horses" Type="Self.Horses" Multiplicity="1" />
+          <End Role="Results" Type="Self.Results" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Horses">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Results">
+              <PropertyRef Name="HorseId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Results_Show_Judges_Results">
+          <End Role="Results" Type="Self.Results" Multiplicity="1" />
+          <End Role="Results_Show_Judges" Type="Self.Results_Show_Judges" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Results">
+              <PropertyRef Name="HorseId" />
+              <PropertyRef Name="ShowId" />
+              <PropertyRef Name="ClassId" />
+            </Principal>
+            <Dependent Role="Results_Show_Judges">
+              <PropertyRef Name="HorseId" />
+              <PropertyRef Name="ShowId" />
+              <PropertyRef Name="ClassId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Results_Show_Judges_Show_Judges">
+          <End Role="Show_Judges" Type="Self.Show_Judges" Multiplicity="1" />
+          <End Role="Results_Show_Judges" Type="Self.Results_Show_Judges" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Show_Judges">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Results_Show_Judges">
+              <PropertyRef Name="Show_JudgeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Results_Shows">
+          <End Role="Shows" Type="Self.Shows" Multiplicity="1" />
+          <End Role="Results" Type="Self.Results" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Shows">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Results">
+              <PropertyRef Name="ShowId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Show_Judges_Shows">
+          <End Role="Shows" Type="Self.Shows" Multiplicity="1" />
+          <End Role="Show_Judges" Type="Self.Show_Judges" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Shows">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Show_Judges">
+              <PropertyRef Name="ShowId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="neighModelStoreContainer">
+          <EntitySet Name="Classes" EntityType="Self.Classes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Horses" EntityType="Self.Horses" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Results" EntityType="Self.Results" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Results_Show_Judges" EntityType="Self.Results_Show_Judges" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Show_Judges" EntityType="Self.Show_Judges" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Shows" EntityType="Self.Shows" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Results_Classes" Association="Self.FK_Results_Classes">
+            <End Role="Classes" EntitySet="Classes" />
+            <End Role="Results" EntitySet="Results" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Results_Horses" Association="Self.FK_Results_Horses">
+            <End Role="Horses" EntitySet="Horses" />
+            <End Role="Results" EntitySet="Results" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Results_Show_Judges_Results" Association="Self.FK_Results_Show_Judges_Results">
+            <End Role="Results" EntitySet="Results" />
+            <End Role="Results_Show_Judges" EntitySet="Results_Show_Judges" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Results_Show_Judges_Show_Judges" Association="Self.FK_Results_Show_Judges_Show_Judges">
+            <End Role="Show_Judges" EntitySet="Show_Judges" />
+            <End Role="Results_Show_Judges" EntitySet="Results_Show_Judges" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Results_Shows" Association="Self.FK_Results_Shows">
+            <End Role="Shows" EntitySet="Shows" />
+            <End Role="Results" EntitySet="Results" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Show_Judges_Shows" Association="Self.FK_Show_Judges_Shows">
+            <End Role="Shows" EntitySet="Shows" />
+            <End Role="Show_Judges" EntitySet="Show_Judges" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="neighModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Horse">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FullName" Type="String" MaxLength="250" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Nickname" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ARegNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="RRegNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Results" Relationship="neighModel.FK_Results_Horses" FromRole="Horse" ToRole="Result" />
+        </EntityType>
+        <EntityContainer Name="neighEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Horses" EntityType="neighModel.Horse" />
+          <EntitySet Name="Classes" EntityType="neighModel.Class" />
+          <EntitySet Name="Show_Judges" EntityType="neighModel.Show_Judges" />
+          <EntitySet Name="Shows" EntityType="neighModel.Show" />
+          <AssociationSet Name="FK_Show_Judges_Shows" Association="neighModel.FK_Show_Judges_Shows">
+            <End Role="Show" EntitySet="Shows" />
+            <End Role="Show_Judges" EntitySet="Show_Judges" />
+          </AssociationSet>
+          <EntitySet Name="Results" EntityType="neighModel.Result" />
+          <AssociationSet Name="FK_Results_Classes" Association="neighModel.FK_Results_Classes">
+            <End Role="Class" EntitySet="Classes" />
+            <End Role="Result" EntitySet="Results" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Results_Horses" Association="neighModel.FK_Results_Horses">
+            <End Role="Horse" EntitySet="Horses" />
+            <End Role="Result" EntitySet="Results" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Results_Shows" Association="neighModel.FK_Results_Shows">
+            <End Role="Show" EntitySet="Shows" />
+            <End Role="Result" EntitySet="Results" />
+          </AssociationSet>
+          <EntitySet Name="Results_Show_Judges" EntityType="neighModel.Results_Show_Judges" />
+          <AssociationSet Name="FK_Results_Show_Judges_Results" Association="neighModel.FK_Results_Show_Judges_Results">
+            <End Role="Result" EntitySet="Results" />
+            <End Role="Results_Show_Judges" EntitySet="Results_Show_Judges" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Results_Show_Judges_Show_Judges" Association="neighModel.FK_Results_Show_Judges_Show_Judges">
+            <End Role="Show_Judges" EntitySet="Show_Judges" />
+            <End Role="Results_Show_Judges" EntitySet="Results_Show_Judges" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Class">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Type" Type="neighModel.ClassType" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="QualifyingPoints" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Results" Relationship="neighModel.FK_Results_Classes" FromRole="Class" ToRole="Result" />
+          <Property Name="Archive" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EnumType Name="ClassType">
+          <Member Name="AMHA" Value="0" />
+          <Member Name="AMHR" Value="1" />
+        </EnumType>
+        <EntityType Name="Show_Judges">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ShowId" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Show" Relationship="neighModel.FK_Show_Judges_Shows" FromRole="Show_Judges" ToRole="Show" />
+          <NavigationProperty Name="Results_Show_Judges" Relationship="neighModel.FK_Results_Show_Judges_Show_Judges" FromRole="Show_Judges" ToRole="Results_Show_Judges" />
+        </EntityType>
+        <EntityType Name="Show">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ShowType" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="StartDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="EndDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Location" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Show_Judges" Relationship="neighModel.FK_Show_Judges_Shows" FromRole="Show" ToRole="Show_Judges" />
+          <NavigationProperty Name="Results" Relationship="neighModel.FK_Results_Shows" FromRole="Show" ToRole="Result" />
+          <Property Name="Level" Type="Int32" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Show_Judges_Shows">
+          <End Type="neighModel.Show" Role="Show" Multiplicity="1" />
+          <End Type="neighModel.Show_Judges" Role="Show_Judges" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Show">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Show_Judges">
+              <PropertyRef Name="ShowId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Result">
+          <Key>
+            <PropertyRef Name="HorseId" />
+            <PropertyRef Name="ShowId" />
+            <PropertyRef Name="ClassId" />
+          </Key>
+          <Property Name="HorseId" Type="Int32" Nullable="false" />
+          <Property Name="ShowId" Type="Int32" Nullable="false" />
+          <Property Name="ClassId" Type="Int32" Nullable="false" />
+          <Property Name="HorsesInClass" Type="Int32" />
+          <NavigationProperty Name="Class" Relationship="neighModel.FK_Results_Classes" FromRole="Result" ToRole="Class" />
+          <NavigationProperty Name="Horse" Relationship="neighModel.FK_Results_Horses" FromRole="Result" ToRole="Horse" />
+          <NavigationProperty Name="Show" Relationship="neighModel.FK_Results_Shows" FromRole="Result" ToRole="Show" />
+          <NavigationProperty Name="Results_Show_Judges" Relationship="neighModel.FK_Results_Show_Judges_Results" FromRole="Result" ToRole="Results_Show_Judges" />
+          <Property Name="OverallPlacing" Type="Int32" />
+          <Property Name="Points" Type="Double" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="SortOrder" Type="Int32" />
+          <Property Name="ClassNumber" Type="String" />
+        </EntityType>
+        <Association Name="FK_Results_Classes">
+          <End Type="neighModel.Class" Role="Class" Multiplicity="1" />
+          <End Type="neighModel.Result" Role="Result" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Class">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Result">
+              <PropertyRef Name="ClassId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Results_Horses">
+          <End Type="neighModel.Horse" Role="Horse" Multiplicity="1" />
+          <End Type="neighModel.Result" Role="Result" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Horse">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Result">
+              <PropertyRef Name="HorseId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Results_Shows">
+          <End Type="neighModel.Show" Role="Show" Multiplicity="1" />
+          <End Type="neighModel.Result" Role="Result" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Show">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Result">
+              <PropertyRef Name="ShowId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Results_Show_Judges">
+          <Key>
+            <PropertyRef Name="HorseId" />
+            <PropertyRef Name="ShowId" />
+            <PropertyRef Name="ClassId" />
+            <PropertyRef Name="Show_JudgeId" />
+          </Key>
+          <Property Name="HorseId" Type="Int32" Nullable="false" />
+          <Property Name="ShowId" Type="Int32" Nullable="false" />
+          <Property Name="ClassId" Type="Int32" Nullable="false" />
+          <Property Name="Show_JudgeId" Type="Int32" Nullable="false" />
+          <Property Name="Placing" Type="Int32" />
+          <NavigationProperty Name="Result" Relationship="neighModel.FK_Results_Show_Judges_Results" FromRole="Results_Show_Judges" ToRole="Result" />
+          <NavigationProperty Name="Show_Judges" Relationship="neighModel.FK_Results_Show_Judges_Show_Judges" FromRole="Results_Show_Judges" ToRole="Show_Judges" />
+        </EntityType>
+        <Association Name="FK_Results_Show_Judges_Results">
+          <End Type="neighModel.Result" Role="Result" Multiplicity="1" />
+          <End Type="neighModel.Results_Show_Judges" Role="Results_Show_Judges" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Result">
+              <PropertyRef Name="HorseId" />
+              <PropertyRef Name="ShowId" />
+              <PropertyRef Name="ClassId" />
+            </Principal>
+            <Dependent Role="Results_Show_Judges">
+              <PropertyRef Name="HorseId" />
+              <PropertyRef Name="ShowId" />
+              <PropertyRef Name="ClassId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Results_Show_Judges_Show_Judges">
+          <End Type="neighModel.Show_Judges" Role="Show_Judges" Multiplicity="1" />
+          <End Type="neighModel.Results_Show_Judges" Role="Results_Show_Judges" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Show_Judges">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Results_Show_Judges">
+              <PropertyRef Name="Show_JudgeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="neighModelStoreContainer" CdmEntityContainer="neighEntities">
+          <EntitySetMapping Name="Horses">
+            <EntityTypeMapping TypeName="neighModel.Horse">
+              <MappingFragment StoreEntitySet="Horses">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="Nickname" ColumnName="Nickname" />
+                <ScalarProperty Name="ARegNumber" ColumnName="ARegNumber" />
+                <ScalarProperty Name="RRegNumber" ColumnName="RRegNumber" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Classes">
+            <EntityTypeMapping TypeName="neighModel.Class">
+              <MappingFragment StoreEntitySet="Classes">
+                <ScalarProperty Name="Archive" ColumnName="Archive" />
+                <ScalarProperty Name="QualifyingPoints" ColumnName="QualifyingPoints" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Show_Judges">
+            <EntityTypeMapping TypeName="neighModel.Show_Judges">
+              <MappingFragment StoreEntitySet="Show_Judges">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ShowId" ColumnName="ShowId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Shows">
+            <EntityTypeMapping TypeName="neighModel.Show">
+              <MappingFragment StoreEntitySet="Shows">
+                <ScalarProperty Name="Level" ColumnName="Level" />
+                <ScalarProperty Name="Location" ColumnName="Location" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ShowType" ColumnName="ShowType" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Results">
+            <EntityTypeMapping TypeName="neighModel.Result">
+              <MappingFragment StoreEntitySet="Results">
+                <ScalarProperty Name="ClassNumber" ColumnName="ClassNumber" />
+                <ScalarProperty Name="SortOrder" ColumnName="SortOrder" />
+                <ScalarProperty Name="Points" ColumnName="Points" />
+                <ScalarProperty Name="OverallPlacing" ColumnName="OverallPlacing" />
+                <ScalarProperty Name="HorsesInClass" ColumnName="HorsesInClass" />
+                <ScalarProperty Name="ClassId" ColumnName="ClassId" />
+                <ScalarProperty Name="ShowId" ColumnName="ShowId" />
+                <ScalarProperty Name="HorseId" ColumnName="HorseId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Results_Show_Judges">
+            <EntityTypeMapping TypeName="neighModel.Results_Show_Judges">
+              <MappingFragment StoreEntitySet="Results_Show_Judges">
+                <ScalarProperty Name="Placing" ColumnName="Placing" />
+                <ScalarProperty Name="Show_JudgeId" ColumnName="Show_JudgeId" />
+                <ScalarProperty Name="ClassId" ColumnName="ClassId" />
+                <ScalarProperty Name="ShowId" ColumnName="ShowId" />
+                <ScalarProperty Name="HorseId" ColumnName="HorseId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

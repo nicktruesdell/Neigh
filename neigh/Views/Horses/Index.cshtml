@@ -1,0 +1,53 @@
+﻿@model IEnumerable<neigh.Datamodel.Horse>
+
+@{
+    ViewBag.Title = "Horses";
+}
+
+<h2>Manage Horses</h2>
+
+<p>
+    @Html.ActionLink("Create New Horse", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th scope="col">
+            @Html.DisplayNameFor(model => model.FullName)
+        </th>
+        <th scope="col">
+            @Html.DisplayNameFor(model => model.Nickname)
+        </th>
+        <th scope="col">
+            @Html.DisplayNameFor(model => model.ARegNumber)
+        </th>
+        <th scope="col">
+            @Html.DisplayNameFor(model => model.RRegNumber)
+        </th>
+        <th scope="col">
+            Action
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.FullName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Nickname)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ARegNumber)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RRegNumber)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
+            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+        </td>
+    </tr>
+}
+
+</table>

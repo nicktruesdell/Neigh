@@ -1,0 +1,71 @@
+﻿@model neigh.Models.HorseInClassEditModel
+
+@{
+    ViewBag.Title = "Create Entry";
+}
+
+<h2>Create Entry</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="form-horizontal" ng-app="app" ng-controller="ClassesController">
+        <h4>Entry</h4>
+        <hr />
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.SelectedHorseId, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.SelectedHorseId, Model.AllHorses)
+                @Html.ValidationMessageFor(model => model.SelectedHorseId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.SelectedShowId, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.SelectedShowId, Model.AllShows, htmlAttributes: new { ng_model = "selectedShowId" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.AllClasses, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div ng-repeat="item in allClasses">
+                    <input type="checkbox" name="SelectedClasses" ng-attr="{ value: 'item.Value', id: '\'cb\' + $index'}" />
+                    <label ng-attr="{ for: '\'cb\' + $index'}" class="control-label">{{item.Text}}</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/Bundles/angular")
+
+    <script type="text/javascript">
+        app.factory('classesFactory', ['$resource', function ($resource) {
+            return $resource('/admin/HorseInClass', null, {
+                'forShow': { url: '/Admin/HorseInClass/ForShow/:showId', isArray: true }
+            });
+        }]);
+
+        app.controller('ClassesController', ['$scope', 'classesFactory', function ($scope, classesFactory) {
+            $scope.allClasses = [];
+            $scope.$watch('selectedShowId', function (newValue) {
+                $scope.allClasses = classesFactory.forShow({ showId: newValue });
+            });
+        }])
+    </script>
+}

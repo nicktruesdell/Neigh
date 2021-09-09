@@ -1,0 +1,16 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{ 
+    ViewBag.Title = "Admin";
+}
+
+<h2>Admin</h2>
+
+<ul>
+    <li>@Html.ActionLink("Manage Classes", "Index", "Classes")</li>
+    <li>@Html.ActionLink("Manage Entries", "Index", "HorseInClass")</li>
+    <li>@Html.ActionLink("Manage Horses", "Index", "Horses")</li>
+    <li>@Html.ActionLink("Manage Shows", "Index", "Shows")</li>
+</ul>

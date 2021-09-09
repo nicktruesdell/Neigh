@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="06e2182e7d2a4368bbd9842d347e6dfc" Name="Diagram1">
+        <EntityTypeShape EntityType="neighModel.Horse" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="neighModel.Class" Width="1.5" PointX="3.375" PointY="0.75" />
+        <EntityTypeShape EntityType="neighModel.Show_Judges" Width="1.5" PointX="3" PointY="4.25" />
+        <EntityTypeShape EntityType="neighModel.Show" Width="1.5" PointX="0.75" PointY="4" />
+        <AssociationConnector Association="neighModel.FK_Show_Judges_Shows" />
+        <EntityTypeShape EntityType="neighModel.Result" Width="1.5" PointX="5.625" PointY="2.5" />
+        <AssociationConnector Association="neighModel.FK_Results_Classes" />
+        <AssociationConnector Association="neighModel.FK_Results_Horses" />
+        <AssociationConnector Association="neighModel.FK_Results_Shows" />
+        <EntityTypeShape EntityType="neighModel.Results_Show_Judges" Width="1.5" PointX="7.875" PointY="3.125" />
+        <AssociationConnector Association="neighModel.FK_Results_Show_Judges_Results" />
+        <AssociationConnector Association="neighModel.FK_Results_Show_Judges_Show_Judges" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
