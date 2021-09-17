@@ -167,6 +167,16 @@
                 window.location = '/Admin/Shows';
             };
             $scope.save = function () {
+                var errors = null;
+                $scope.entries.forEach(function (item) {
+                    if (!item.HorseId) {
+                        errors = "A horse is required for all classes.";
+                    }
+                });
+                if (errors) {
+                    alert(errors);
+                    return;
+                }
                 var postData = {
                     Type: $scope.Type,
                     Location: $scope.Location,
