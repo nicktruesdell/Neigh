@@ -401,8 +401,10 @@ namespace neigh.Controllers
 			}
 
 			// Remove any deleted entries
-			foreach (var result in show.Results)
+			// Don't iterate over show.Results - throws InvalidOperationException if an item is removed
+            for (int i = 0; i < show.Results.Count; i++)
 			{
+                var result = show.Results.ElementAt(i);
 				if (!model.Entries.Any(e => e.OldClassId == result.ClassId && e.OldHorseId == result.HorseId))
 				{
                     RemoveResultShowJudgeEntities(result);
