@@ -88,10 +88,10 @@
             <tbody>
                 <tr ng-repeat="entry in entries">
                     <td>
-                        <input type="text" ng-model="entry.SortOrder" />
+                        <input class="smaller" type="text" ng-model="entry.SortOrder" />
                     </td>
                     <td>
-                        <input type="text" ng-model="entry.ClassNumber" />
+                        <input class="smaller" type="text" ng-model="entry.ClassNumber" />
                     </td>
                     <td>
                         <select class="form-control" ng-options="class.Value as class.Text for class in allClasses" ng-model="entry.ClassId"></select>

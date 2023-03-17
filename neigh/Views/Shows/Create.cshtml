@@ -143,7 +143,7 @@
             $scope.Location = null;
             $scope.Level = null;
             $scope.entries = [{ SortOrder: 1 }, { SortOrder: 2 }, { SortOrder: 3 }, { SortOrder: 4 }, { SortOrder: 5 }];
-            $scope.judges = [{ name: "" }];
+            $scope.judges = [{ name: "Judge A" }, { name: "Judge B" }, { name: "Judge C" }];
             $scope.allClasses = [];
             $scope.allHorses = horsesFactory.getAll();
             $scope.getClasses = function () {
@@ -151,7 +151,6 @@
             };
             $scope.newJudge = function () {
                 $scope.judges.push({ name: ""});
-                console.log($scope.judges);
             };
             $scope.removeJudge = function (index) {
                 $scope.judges.splice(index, 1);
