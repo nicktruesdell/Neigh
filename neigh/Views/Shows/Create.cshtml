@@ -101,7 +101,10 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="5"><a href="javascript:void(0)" ng-click="addEntry()">Add Additional Entry</a></td>
+                    <td colspan="4">
+                        <a href="javascript:void(0)" ng-click="addEntry(1)">Add Additional Entry</a>&nbsp;
+                        <a href="javascript:void(0)" ng-click="addEntry(5)">Add 5 Additional Entries</a>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -142,8 +145,9 @@
             $scope.Type = null
             $scope.Location = null;
             $scope.Level = null;
-            $scope.entries = [{ SortOrder: 1 }, { SortOrder: 2 }, { SortOrder: 3 }, { SortOrder: 4 }, { SortOrder: 5 }];
-            $scope.judges = [{ name: "Judge A" }, { name: "Judge B" }, { name: "Judge C" }];
+            $scope.entries = [{ SortOrder: 1 }, { SortOrder: 2 }, { SortOrder: 3 }, { SortOrder: 4 }, { SortOrder: 5 }, { SortOrder: 6 }, { SortOrder: 7 },
+                { SortOrder: 8 }, { SortOrder: 9 }, { SortOrder: 10 }];
+            $scope.judges = [{ name: "A" }, { name: "B" }, { name: "C" }];
             $scope.allClasses = [];
             $scope.allHorses = horsesFactory.getAll();
             $scope.getClasses = function () {
@@ -155,9 +159,11 @@
             $scope.removeJudge = function (index) {
                 $scope.judges.splice(index, 1);
             };
-            $scope.addEntry = function () {
-                var i = $scope.entries.length + 1;
-                $scope.entries.push({ SortOrder: i });
+            $scope.addEntry = function (count) {
+                for (var x = 0; x < count; x++) {
+                    var i = $scope.entries.length + 1;
+                    $scope.entries.push({ SortOrder: i });
+                }
             }
             $scope.removeEntry = function (index) {
                 $scope.entries.splice(index, 1);
