@@ -238,12 +238,10 @@ namespace neigh.Controllers
             }
             ShowCopyModel sm = new ShowCopyModel()
             {
+                // Deliberately omitting Name, StartDate, and EndDate
                 Id = show.Id,
                 Type = (ShowType)show.ShowType,
-                //Name = show.Name,
                 Location = show.Location,
-                //StartDate = show.StartDate,
-                //EndDate = show.EndDate,
                 Level = (ShowLevel)show.Level,
                 Judges = new List<string>(),
                 Entries = new List<ResultReorderForCopyModel>()
@@ -252,7 +250,7 @@ namespace neigh.Controllers
             {
                 sm.Judges.Add(sj.Name);
             }
-            foreach (Result res in show.Results)
+            foreach (Result res in show.Results.OrderBy(x => x.SortOrder))
             {
                 sm.Entries.Add(new ResultReorderForCopyModel()
                 {
