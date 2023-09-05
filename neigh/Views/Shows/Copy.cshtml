@@ -103,7 +103,10 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="4"><a href="javascript:void(0)" ng-click="addEntry()">Add Additional Entry</a></td>
+                    <td colspan="4">
+                        <a href="javascript:void(0)" ng-click="addEntry(1)">Add Additional Entry</a>&nbsp;
+                        <a href="javascript:void(0)" ng-click="addEntry(5)">Add 5 Additional Entries</a>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -156,9 +159,11 @@
             $scope.removeJudge = function (index) {
                 $scope.judges.splice(index, 1);
             };
-            $scope.addEntry = function() {
-                var i = $scope.entries.length + 1;
-                $scope.entries.push({ SortOrder: i});
+            $scope.addEntry = function (count) {
+                for (var x = 0; x < count; x++) {
+                    var i = $scope.entries.length + 1;
+                    $scope.entries.push({ SortOrder: i });
+                }
             }
             $scope.removeEntry = function(index) {
                 $scope.entries.splice(index, 1);

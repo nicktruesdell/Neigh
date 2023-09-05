@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
@@ -7,6 +8,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using neigh.Classes;
 using neigh.Datamodel;
 using neigh.Models;
 
@@ -268,6 +270,7 @@ namespace neigh.Controllers
         // POST: Shows/Copy
         public async Task<ActionResult> Copy([System.Web.Http.FromBody]ShowCopyModel model)
         {
+            Logger.EventLogger.LogInformation("Received request to POST Shows/Copy", model);
             Show s = new Datamodel.Show();
             s.Name = model.Name;
             s.Location = model.Location;
@@ -304,7 +307,16 @@ namespace neigh.Controllers
             }
 
             db.Shows.Add(s);
-            await db.SaveChangesAsync();
+            try
+            {
+                await db.SaveChangesAsync();
+                Logger.EventLogger.LogInformation($"New show {s.Name} - first save successful");
+            }
+            catch (Exception ex)
+            {
+                Logger.EventLogger.LogError(ex, ex.Message);
+                throw ex;
+            }
 
             foreach (Show_Judges sj in s.Show_Judges)
             {
@@ -319,7 +331,15 @@ namespace neigh.Controllers
                     });
                 }
             }
-            await db.SaveChangesAsync();
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Logger.EventLogger.LogError(ex, ex.Message);
+                Logger.EventLogger.LogInformation($"New show {s.Name} - first save successful");
+            }
             return new HttpStatusCodeResult(200);
         }
 
