@@ -174,7 +174,32 @@
             $scope.returnToIndex = function() {
                 window.location = '/Admin/Shows';
             };
-            $scope.save = function() {
+            $scope.save = function () {
+                var errors = null;
+                if (!$scope.Location) {
+                    alert('Location is required.');
+                    return;
+                }
+                $scope.entries.forEach(function (item) {
+                    if (!item.HorseId) {
+                        errors = "A horse is required for all classes.";
+                    }
+                });
+                for (var i = 0; i < $scope.entries.length - 1; i++) {
+                    for (var j = i + 1; j < $scope.entries.length; j++) {
+                        if ($scope.entries[i].HorseId == $scope.entries[j].HorseId && $scope.entries[i].ClassId == $scope.entries[j].ClassId) {
+                            errors = "The same horse can only be entered in a class one time.";
+                            break;
+                        }
+                    }
+                    if (errors)
+                        break;
+                }
+                if (errors) {
+                    alert(errors);
+                    return;
+                }
+
                 var postData = {
                     Id: $scope.Id,
                     Type: $scope.Type,
