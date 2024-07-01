@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 using neigh.Datamodel;
 using neigh.Models;
@@ -44,6 +43,11 @@ namespace neigh.Controllers
             ViewBag.Message = "Your contact page.";
 
             return View();
+        }
+
+        public ActionResult Ping()
+        {
+            return new HttpStatusCodeResult(System.Net.HttpStatusCode.OK);
         }
 
         private List<ShowModel> ConvertShowsToModelForView(List<Show>UpcomingShows)

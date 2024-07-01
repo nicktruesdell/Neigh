@@ -51,6 +51,23 @@
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+    <script type="text/javascript">
+        var timeDelay = 300000;
+
+        $(function () {
+            setTimeout(() => {
+                runPing();
+            }, timeDelay);
+        });
+
+        function runPing() {
+            $.get("/home/ping", function () {
+                setTimeout(() => {
+                    runPing();
+                }, timeDelay);
+            });
+        }
+    </script>
     @RenderSection("scripts", required: false)
 </body>
 </html>
