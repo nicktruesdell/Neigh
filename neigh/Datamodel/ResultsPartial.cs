@@ -19,7 +19,7 @@ namespace neigh.Datamodel
         public object ClassId { get; set; }
         [Display(Name = "# In Class")]
         public object HorsesInClass { get; set; }
-        [Display(Name = "Overall Placing")]
+        [Display(Name = "Placing")]
         public object OverallPlacing { get; set; }
         [Display(Name = "Points")]
         public object Points { get; set; }
